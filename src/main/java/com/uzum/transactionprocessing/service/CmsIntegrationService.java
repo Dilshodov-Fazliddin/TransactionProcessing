@@ -7,4 +7,5 @@ public interface CmsIntegrationService {
     CmsResponse fetchCardInfoByToken(String token);
 
     void validateCardToken(String token, Currency currency);
+
 }

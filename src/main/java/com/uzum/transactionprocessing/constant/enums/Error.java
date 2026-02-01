@@ -20,8 +20,9 @@ public enum Error {
     CARD_EXPIRED_CODE(10013, "Token of an expired card provided"),
     ACCOUNT_NOT_ACTIVE_CODE(10014, "Provided token belongs to a non-active account"),
     CMS_REQUEST_INVALID_CODE(10015, "CMS request invalid"),
-    CURRENCY_INVALID_CODE(10016, "Currency invalid");;
-
+    CURRENCY_INVALID_CODE(10016, "Currency invalid"),
+    AMOUNT_NOT_ENOUGH(10017, "Not enough money"),
+    INVALID_ACCOUNT_STATUS(10018,"Account status frozen or blocked");
     final int code;
     final String message;
 

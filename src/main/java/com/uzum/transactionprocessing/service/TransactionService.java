@@ -2,7 +2,7 @@ package com.uzum.transactionprocessing.service;
 
 import com.uzum.transactionprocessing.constant.enums.TransactionStatus;
 import com.uzum.transactionprocessing.entity.TransactionEntity;
-import com.uzum.transactionprocessing.exception.kafka.nontransients.TransactionInvalidException;
+import com.uzum.transactionprocessing.exception.kafka.nontransiets.TransactionInvalidException;
 
 public interface TransactionService {
     void changeTransactionStatusAndUnclaim(Long transactionId, TransactionStatus status);

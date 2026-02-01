@@ -3,18 +3,21 @@ package com.uzum.transactionprocessing.service.impl;
 import com.uzum.transactionprocessing.constant.enums.Error;
 import com.uzum.transactionprocessing.constant.enums.TransactionStatus;
 import com.uzum.transactionprocessing.entity.TransactionEntity;
-import com.uzum.transactionprocessing.exception.kafka.nontransients.TransactionInvalidException;
+import com.uzum.transactionprocessing.exception.kafka.nontransiets.TransactionInvalidException;
 import com.uzum.transactionprocessing.repository.TransactionRepository;
 import com.uzum.transactionprocessing.service.TransactionService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class TransactionServiceImpl implements TransactionService {
-    private final TransactionRepository transactionRepository;
+    TransactionRepository transactionRepository;
 
 
     @Transactional
