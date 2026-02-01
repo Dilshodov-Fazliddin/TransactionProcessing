@@ -6,7 +6,7 @@ import com.uzum.transactionprocessing.constant.enums.Currency;
 import com.uzum.transactionprocessing.constant.enums.TransactionStatus;
 import com.uzum.transactionprocessing.constant.enums.TransactionType;
 import com.uzum.transactionprocessing.dto.event.TransactionValidateEvent;
-import com.uzum.transactionprocessing.dto.response.AccountStatus;
+import com.uzum.transactionprocessing.constant.enums.AccountStatus;
 import com.uzum.transactionprocessing.dto.response.CmsResponse;
 import com.uzum.transactionprocessing.entity.TransactionEntity;
 import com.uzum.transactionprocessing.service.CmsIntegrationService;
