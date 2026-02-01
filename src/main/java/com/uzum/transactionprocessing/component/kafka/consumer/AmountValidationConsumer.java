@@ -3,10 +3,13 @@ package com.uzum.transactionprocessing.component.kafka.consumer;
 import com.uzum.transactionprocessing.component.kafka.EventConsumer;
 import com.uzum.transactionprocessing.component.kafka.producer.TransactionEvenProducer;
 import com.uzum.transactionprocessing.constant.KafkaConstants;
+import com.uzum.transactionprocessing.constant.enums.Error;
 import com.uzum.transactionprocessing.constant.enums.TransactionStatus;
 import com.uzum.transactionprocessing.dto.event.TransactionValidateEvent;
 import com.uzum.transactionprocessing.entity.TransactionEntity;
+import com.uzum.transactionprocessing.exception.http.HttpClientException;
 import com.uzum.transactionprocessing.exception.http.HttpServerException;
+import com.uzum.transactionprocessing.exception.kafka.nontransiets.CredentialsInvalidException;
 import com.uzum.transactionprocessing.exception.kafka.transiets.HttpServerUnavailableException;
 import com.uzum.transactionprocessing.exception.kafka.transiets.TransientException;
 import com.uzum.transactionprocessing.service.SenderValidationService;
@@ -50,14 +53,19 @@ public class AmountValidationConsumer implements EventConsumer<TransactionValida
         }
 
         try {
+
             senderValidationService.validateAmount(transaction.getSenderToken(),transaction.getAmount(),transaction.getCurrency());
 
             transactionService.changeTransactionStatusAndUnclaim(transaction.getId(), TransactionStatus.AMOUNT_VALIDATED);
 
             evenProducer.publishForCalculateFee(event);
+
         } catch (HttpServerException e) {
             transactionService.unclaim(event.transactionId());
             throw new HttpServerUnavailableException(e);
+
+        } catch (HttpClientException e){
+            throw new CredentialsInvalidException(Error.AMOUNT_VALIDATE_REQUEST_INVALID);
         }
     }
 
