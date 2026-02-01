@@ -9,12 +9,14 @@ import com.uzum.transactionprocessing.dto.event.TransactionValidateEvent;
 import com.uzum.transactionprocessing.entity.TransactionEntity;
 import com.uzum.transactionprocessing.exception.http.HttpClientException;
 import com.uzum.transactionprocessing.exception.http.HttpServerException;
-import com.uzum.transactionprocessing.exception.kafka.nontransients.CredentialsInvalidException;
-import com.uzum.transactionprocessing.exception.kafka.transients.HttpServerUnavailableException;
-import com.uzum.transactionprocessing.exception.kafka.transients.TransientException;
+import com.uzum.transactionprocessing.exception.kafka.nontransiets.CredentialsInvalidException;
+import com.uzum.transactionprocessing.exception.kafka.transiets.HttpServerUnavailableException;
+import com.uzum.transactionprocessing.exception.kafka.transiets.TransientException;
 import com.uzum.transactionprocessing.service.CmsIntegrationService;
 import com.uzum.transactionprocessing.service.TransactionService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.BackOff;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -24,10 +26,11 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class ReceiverValidationConsumer implements EventConsumer<TransactionValidateEvent> {
-    private final TransactionService transactionService;
-    private final CmsIntegrationService cmsIntegrationService;
-    private final TransactionEvenProducer evenProducer;
+    TransactionService transactionService;
+    CmsIntegrationService cmsIntegrationService;
+    TransactionEvenProducer evenProducer;
 
 
     @RetryableTopic(attempts = "5", backOff = @BackOff(delay = 5000), include = {TransientException.class}, numPartitions = "3", replicationFactor = "1")

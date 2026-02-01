@@ -1,18 +1,20 @@
 package com.uzum.transactionprocessing.service.impl;
 
 import com.uzum.transactionprocessing.constant.enums.Currency;
-import com.uzum.transactionprocessing.dto.response.AccountStatus;
+import com.uzum.transactionprocessing.constant.enums.AccountStatus;
 import com.uzum.transactionprocessing.dto.response.CmsResponse;
-import com.uzum.transactionprocessing.entity.TransactionEntity;
-import com.uzum.transactionprocessing.exception.kafka.nontransients.CredentialsInvalidException;
+import com.uzum.transactionprocessing.exception.kafka.nontransiets.CredentialsInvalidException;
 import com.uzum.transactionprocessing.service.CmsIntegrationService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class CmsIntegrationServiceImpl implements CmsIntegrationService {
     @Override
     public CmsResponse fetchCardInfoByToken(String token) {
@@ -37,4 +39,5 @@ public class CmsIntegrationServiceImpl implements CmsIntegrationService {
         }
 
     }
+
 }
