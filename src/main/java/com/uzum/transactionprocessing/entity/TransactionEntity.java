@@ -24,7 +24,6 @@ import org.hibernate.type.SqlTypes;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@ToString
 @Table(name = "transactions")
 public class TransactionEntity extends BaseEntity {
 

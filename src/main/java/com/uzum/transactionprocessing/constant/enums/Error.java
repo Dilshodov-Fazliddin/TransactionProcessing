@@ -22,7 +22,8 @@ public enum Error {
     CMS_REQUEST_INVALID_CODE(10015, "CMS request invalid"),
     CURRENCY_INVALID_CODE(10016, "Currency invalid"),
     AMOUNT_NOT_ENOUGH(10017, "Not enough money"),
-    INVALID_ACCOUNT_STATUS(10018,"Account status frozen or blocked");
+    INVALID_ACCOUNT_STATUS(10018,"Account status frozen or blocked"),
+    AMOUNT_VALIDATE_REQUEST_INVALID(10019,"Amount request invalid");
     final int code;
     final String message;
 
