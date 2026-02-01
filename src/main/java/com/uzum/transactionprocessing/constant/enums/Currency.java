@@ -1,7 +1,7 @@
 package com.uzum.transactionprocessing.constant.enums;
 
-public enum TransactionCurrency {
+public enum Currency {
     UZS,
     RUB,
-    DOLLAR
+    USD
 }

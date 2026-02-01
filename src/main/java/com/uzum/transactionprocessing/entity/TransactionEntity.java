@@ -1,45 +1,60 @@
 package com.uzum.transactionprocessing.entity;
 
-import com.uzum.transactionprocessing.constant.enums.TransactionCurrency;
-import com.uzum.transactionprocessing.constant.enums.TransactionState;
+import com.uzum.transactionprocessing.constant.enums.Currency;
 import com.uzum.transactionprocessing.constant.enums.TransactionStatus;
-import jakarta.persistence.*;
-import lombok.*;
+import com.uzum.transactionprocessing.constant.enums.TransactionType;
+import com.uzum.transactionprocessing.entity.base.BaseEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
+import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Getter
 @Setter
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TransactionEntity {
+@Table(name = "transactions")
+public class TransactionEntity extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-
-    @Column(nullable = false , unique = true)
+    @Column(nullable = false, unique = true)
     Long referenceId;
 
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    TransactionStatus transactionStatus;
+    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(columnDefinition = "type", nullable = false)
+    TransactionType type;
+
+    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(columnDefinition = "status", nullable = false)
+    TransactionStatus status;
+
+    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(columnDefinition = "currency", nullable = false)
+    Currency currency;
 
     @Column(nullable = false)
+    @Positive
     Long amount;
 
     @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    TransactionCurrency transactionCurrency;
-
-    @Column(nullable = false)
+    @PositiveOrZero
     Long fee;
 
     @Column(nullable = false)
@@ -55,12 +70,5 @@ public class TransactionEntity {
     String receiverToken;
 
     @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    TransactionState transactionState;
-
-    @CreationTimestamp
-    LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    LocalDateTime updatedAt;
+    boolean isClaimedForProcessing;
 }

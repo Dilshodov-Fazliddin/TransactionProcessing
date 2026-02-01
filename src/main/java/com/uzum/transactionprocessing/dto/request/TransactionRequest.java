@@ -1,16 +1,24 @@
 package com.uzum.transactionprocessing.dto.request;
 
-import com.uzum.transactionprocessing.constant.enums.TransactionCurrency;
+import com.uzum.transactionprocessing.constant.enums.Currency;
+import com.uzum.transactionprocessing.constant.enums.TransactionType;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
-public record TransactionRequest(
-        @NotNull Long referenceId,
-        @NotNull Long amount,
-        @NotNull TransactionCurrency transactionCurrency,
-        @NotNull Long fee,
-        @NotBlank String senderName,
-        @NotBlank String senderToken,
-        @NotBlank String receiverName,
-        @NotBlank String receiverToken
-) {}
+public record TransactionRequest(@NotNull(message = "referenceId required") Long referenceId,
+                                 @NotNull(message = "transaction type required") TransactionType type,
+                                 @NotNull(message = "amount is required") @Positive(message = "amount should be positive") Long amount,
+                                 @NotNull(message = "currency required") Currency currency,
+                                 @NotBlank(message = "senderName required") String senderName,
+                                 @NotBlank(message = "senderToken required") String senderToken,
+                                 @NotBlank(message = "receiverName required") String receiverName,
+                                 @NotBlank(message = "receiverToken required") String receiverToken) {
+
+
+    @AssertTrue(message = "sender and receiver token can't match")
+    private boolean isDifferentTokens() {
+        return !this.senderToken.equals(this.receiverToken);
+    }
+}

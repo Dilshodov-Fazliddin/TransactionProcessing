@@ -1,7 +1,7 @@
 package com.uzum.transactionprocessing.handler;
 
-import com.uzum.transactionprocessing.exception.HttpClientException;
-import com.uzum.transactionprocessing.exception.HttpServerException;
+import com.uzum.transactionprocessing.exception.http.HttpClientException;
+import com.uzum.transactionprocessing.exception.http.HttpServerException;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;

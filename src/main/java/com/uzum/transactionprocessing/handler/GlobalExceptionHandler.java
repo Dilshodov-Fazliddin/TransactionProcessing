@@ -1,11 +1,12 @@
 package com.uzum.transactionprocessing.handler;
 
-import com.uzum.transactionprocessing.dto.error.ErrorDto;
+import com.uzum.transactionprocessing.constant.enums.Error;
+import com.uzum.transactionprocessing.constant.enums.ErrorType;
+import com.uzum.transactionprocessing.dto.response.error.ErrorResponse;
 import com.uzum.transactionprocessing.exception.ApplicationException;
-import com.uzum.transactionprocessing.exception.DataNotFoundException;
-import com.uzum.transactionprocessing.exception.HttpClientException;
-import com.uzum.transactionprocessing.exception.HttpServerException;
 import jakarta.validation.ConstraintViolationException;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,151 +16,90 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import static com.uzum.transactionprocessing.constant.enums.Error.*;
-import static com.uzum.transactionprocessing.constant.enums.ErrorType.*;
 
-
-@RestControllerAdvice
 @Slf4j
+@ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something is wrong:" + ex.getMessage());
-    }
-
-
-    @ExceptionHandler(DataNotFoundException.class)
-    public ResponseEntity<String> handleDataNotFoundException(DataNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-    }
-
-
     @ExceptionHandler(ApplicationException.class)
-    private ResponseEntity<ErrorDto> handleApplicationException(ApplicationException ex) {
+    private ResponseEntity<ErrorResponse> handleApplicationException(final ApplicationException ex) {
         log.error("Error: {}", ex.getMessage());
 
-        var errorBody = ErrorDto
-                .builder()
-                .code(ex.getCode())
-                .type(ex.getErrorType())
-                .message(ex.getMessage())
-                .build();
+        var errorResponse = ErrorResponse.of(ex);
 
-        return ResponseEntity.status(ex.getStatus()).body(errorBody);
+        return ResponseEntity.status(ex.getStatus()).body(errorResponse);
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
-    private ResponseEntity<ErrorDto> handleMissingRequestHeaderException(final MissingRequestHeaderException ex) {
+    private ResponseEntity<ErrorResponse> handleMissingRequestHeaderException(final MissingRequestHeaderException ex) {
         log.error("MissingRequestHeaderException : {}", ex.getMessage(), ex);
 
-        var error = ErrorDto
-                .builder()
-                .type(INTERNAL)
-                .code(MISSING_REQUEST_HEADER_ERROR_CODE.getCode())
-                .message(ex.getMessage())
-                .build();
+        var error = ErrorResponse.of(Error.MISSING_REQUEST_HEADER_ERROR_CODE, ex.getMessage(), ErrorType.INTERNAL);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    protected ResponseEntity<Object> handleHttpMediaTypeNotSupportedException(final HttpMediaTypeNotSupportedException ex) {
-        log.error("HttpMediaTypeNotSupportedException : {}", ex.getMessage(), ex);
+    public ResponseEntity<ErrorResponse> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex) {
+        log.error("HttpMediaTypeNotSupportedException: {}", ex.getMessage(), ex);
 
-        var error = ErrorDto
-                .builder()
-                .type(INTERNAL)
-                .code(HANDLER_NOT_FOUND_ERROR_CODE.getCode())
-                .message(ex.getMessage())
-                .build();
+        var error = ErrorResponse.of(Error.HANDLER_NOT_FOUND_ERROR_CODE, ex.getMessage(), ErrorType.INTERNAL);
 
-        return ResponseEntity.badRequest().body(error);
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(error);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
         log.error("HttpRequestMethodNotSupportedException : {}", ex.getMessage(), ex);
 
-        var error = ErrorDto
-                .builder()
-                .type(INTERNAL)
-                .code(METHOD_NOT_SUPPORTED_ERROR_CODE.getCode())
-                .message(ex.getMessage())
-                .build();
+        var error = ErrorResponse.of(Error.METHOD_NOT_SUPPORTED_ERROR_CODE, ex.getMessage(), ErrorType.INTERNAL);
 
         return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(ResourceAccessException.class)
-    public ResponseEntity<ErrorDto> handleResourceAccessException(ResourceAccessException ex) {
+    private ResponseEntity<ErrorResponse> handleResourceAccessException(final ResourceAccessException ex) {
         log.error("ResourceAccessException = {}", ex.getMessage(), ex);
 
-        var error = ErrorDto
-                .builder()
-                .type(INTERNAL)
-                .code(INTERNAL_TIMEOUT_ERROR_CODE.getCode())
-                .message(ex.getMessage())
-                .build();
+        var error = ErrorResponse.of(Error.INTERNAL_TIMEOUT_ERROR_CODE, ex.getMessage(), ErrorType.INTERNAL);
 
         return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(error);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorDto> handleMethodArgumentMismatchException(MethodArgumentTypeMismatchException ex) {
+    private ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException ex) {
         log.error("MethodArgumentTypeMismatchException = {}", ex.getMessage(), ex);
 
-        var error = ErrorDto
-                .builder()
-                .type(INTERNAL)
-                .code(INVALID_REQUEST_PARAM_ERROR_CODE.getCode())
-                .message(ex.getMessage())
-                .build();
+        var error = ErrorResponse.of(Error.INVALID_REQUEST_PARAM_ERROR_CODE, ex.getMessage(), ErrorType.INTERNAL);
 
         return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    private ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(final MethodArgumentNotValidException ex) {
         log.error("Validation error: {}", ex.getMessage(), ex);
 
-        var validationErrors = ex.getBindingResult()
-                .getAllErrors()
-                .stream()
-                .map(error -> {
-                    if (error instanceof FieldError fieldError) {
-                        return fieldError.getField() + ": " + fieldError.getDefaultMessage();
-                    } else {
-                        return error.getDefaultMessage();
-                    }
-                })
-                .toList();
+        var validationErrors = ex.getBindingResult().getAllErrors().stream().map(error -> error instanceof FieldError fieldError ? fieldError.getField() + ": " + fieldError.getDefaultMessage() : error.getDefaultMessage()).toList();
 
-        var error = ErrorDto.builder()
-                .type(VALIDATION)
-                .message(VALIDATION_ERROR_CODE.getMessage())
-                .validationErrors(validationErrors)
-                .build();
+        var error = ErrorResponse.of(Error.VALIDATION_ERROR_CODE.getCode(), Error.VALIDATION_ERROR_CODE.getMessage(), ErrorType.VALIDATION, validationErrors);
 
         return ResponseEntity.badRequest().body(error);
     }
 
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    protected ResponseEntity<Object> httpMessageNotReadableException(final HttpMessageNotReadableException ex) {
+    private ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(final HttpMessageNotReadableException ex) {
         log.error("HttpMessageNotReadableException : {}", ex.getMessage(), ex);
 
-        var error = ErrorDto
-                .builder()
-                .type(INTERNAL)
-                .code(JSON_NOT_VALID_ERROR_CODE.getCode())
-                .message(ex.getMessage())
-                .build();
+        var error = ErrorResponse.of(Error.JSON_NOT_VALID_ERROR_CODE, ex.getMessage(), ErrorType.INTERNAL);
 
         return ResponseEntity.badRequest().body(error);
     }
@@ -168,72 +108,43 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<Object> constraintViolationException(ConstraintViolationException ex) {
         log.error("ConstraintViolationException : {}", ex.getMessage(), ex);
 
-        var error = ErrorDto.builder().build();
+        var error = ErrorResponse.of(Error.VALIDATION_ERROR_CODE, ex.getMessage(), ErrorType.VALIDATION);
 
         return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
-    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex) {
+    private ResponseEntity<ErrorResponse> handleNoHandlerFoundException(final NoHandlerFoundException ex) {
         log.error("NoHandlerFoundException : {}", ex.getMessage(), ex);
 
-        var error = ErrorDto
-                .builder()
-                .type(INTERNAL)
-                .code(HANDLER_NOT_FOUND_ERROR_CODE.getCode())
-                .message(ex.getMessage())
-                .build();
+        var error = ErrorResponse.of(Error.HANDLER_NOT_FOUND_ERROR_CODE, ex.getMessage(), ErrorType.INTERNAL);
 
         return ResponseEntity.badRequest().body(error);
     }
 
-    @ExceptionHandler(HttpClientException.class)
-    protected ResponseEntity<ErrorDto> handleException(final HttpClientException ex) {
+    @ExceptionHandler(HttpClientErrorException.class)
+    private ResponseEntity<ErrorResponse> handleHttpClientErrorException(final HttpClientErrorException ex) {
         log.error("HttpClientErrorException : {}", ex.getMessage(), ex);
 
-        var error = ErrorDto
-                .builder()
-                .code(EXTERNAL_SERVICE_FAILED_ERROR_CODE.getCode())
-                .type(INTERNAL)
-                .message(ex.getMessage())
-                .build();
+        var error = ErrorResponse.of(Error.EXTERNAL_SERVICE_FAILED_ERROR_CODE, ex.getMessage(), ErrorType.EXTERNAL);
 
-        return ResponseEntity.status(ex.getStatus()).body(error);
+        return ResponseEntity.status(ex.getStatusCode()).body(error);
     }
 
-    @ExceptionHandler(HttpServerException.class)
-    protected ResponseEntity<ErrorDto> handleException(final HttpServerException ex) {
+    @ExceptionHandler(HttpServerErrorException.class)
+    private ResponseEntity<ErrorResponse> handleHttpServerErrorException(final HttpServerErrorException ex) {
         log.error("HttpServerErrorException : {}", ex.getMessage(), ex);
 
-        var error = ErrorDto
-                .builder()
-                .code(EXTERNAL_SERVICE_FAILED_ERROR_CODE.getCode())
-                .type(EXTERNAL)
-                .message(ex.getMessage())
-                .build();
+        var error = ErrorResponse.of(Error.EXTERNAL_SERVICE_FAILED_ERROR_CODE, ex.getMessage(), ErrorType.EXTERNAL);
 
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
     }
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ErrorDto> handleIllegalState(IllegalStateException ex) {
-        var error= ErrorDto.builder()
-                .type(INTERNAL)
-                .code(409)
-                .message(ex.getMessage())
-                .build();
-        return ResponseEntity.status(HttpStatus.valueOf(409)).body(error);
-    }
 
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ErrorDto> handleException(final Exception ex) {
+    private ResponseEntity<ErrorResponse> handleGenericException(final Exception ex) {
         log.error("Exception : {}", ex.getMessage(), ex);
 
-        var error = ErrorDto
-                .builder()
-                .code(INTERNAL_SERVICE_ERROR_CODE.getCode())
-                .type(INTERNAL)
-                .message(ex.getMessage())
-                .build();
+        var error = ErrorResponse.of(Error.INTERNAL_SERVICE_ERROR_CODE, ex.getMessage(), ErrorType.INTERNAL);
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
