@@ -1,0 +1,26 @@
+package com.uzum.transactionprocessing.component.kafka.producer;
+
+import com.uzum.transactionprocessing.constant.KafkaConstants;
+import com.uzum.transactionprocessing.dto.event.TransactionValidateEvent;
+import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+@Component
+@RequiredArgsConstructor
+public class TransactionEvenProducer {
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+
+    public void publishForSenderValidation(TransactionValidateEvent event) {
+        kafkaTemplate.send(KafkaConstants.SENDER_VALIDATE_TOPIC, event);
+    }
+
+    public void publishForReceiverValidation(TransactionValidateEvent event) {
+        kafkaTemplate.send(KafkaConstants.RECEIVER_VALIDATE_TOPIC, event);
+    }
+
+    public void publishForAmountValidation(TransactionValidateEvent event) {
+        kafkaTemplate.send(KafkaConstants.AMOUNT_VALIDATE_TOPIC, event);
+    }
+}

@@ -1,0 +1,25 @@
+Configuration:
+  status: INFO
+
+  Loggers:
+    Root:
+      level: INFO
+      AppenderRef:
+        - ref: stdout
+        - ref: file
+
+  Appenders:
+    Console:
+      name: stdout
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"
+
+    File:
+      name: file
+      fileName: "logs/${date:yyyy-MM}/app-${date:yyyy-MM-dd}.log"
+      createOnDemand: true
+      maxFileSize: 5KB
+      maxBackupIndex: 2
+      PatternLayout:
+        pattern: "%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"

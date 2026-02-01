@@ -15,7 +15,12 @@ public enum Error {
     METHOD_NOT_SUPPORTED_ERROR_CODE(10008, "Method not supported"),
     MISSING_REQUEST_HEADER_ERROR_CODE(10009, "Missing request header"),
     HTTP_SERVICE_ERROR_CODE(10010, "Service error code"),
-    HTTP_CLIENT_ERROR_CODE(10011, "Client error code");
+    HTTP_CLIENT_ERROR_CODE(10011, "Client error code"),
+    TRANSACTION_ID_INVALID_CODE(10012, "Transaction Id invalid"),
+    CARD_EXPIRED_CODE(10013, "Token of an expired card provided"),
+    ACCOUNT_NOT_ACTIVE_CODE(10014, "Provided token belongs to a non-active account"),
+    CMS_REQUEST_INVALID_CODE(10015, "CMS request invalid"),
+    CURRENCY_INVALID_CODE(10016, "Currency invalid");;
 
     final int code;
     final String message;
