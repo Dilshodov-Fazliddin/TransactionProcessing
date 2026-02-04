@@ -1,9 +1,9 @@
 package com.uzum.transactionprocessing.service.impl;
 
 import com.uzum.transactionprocessing.constant.enums.Currency;
-import com.uzum.transactionprocessing.dto.response.AccountStatus;
+import com.uzum.transactionprocessing.constant.enums.AccountStatus;
 import com.uzum.transactionprocessing.dto.response.CmsResponse;
-import com.uzum.transactionprocessing.exception.kafka.nontransients.CredentialsInvalidException;
+import com.uzum.transactionprocessing.exception.kafka.nontransiets.CredentialsInvalidException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
