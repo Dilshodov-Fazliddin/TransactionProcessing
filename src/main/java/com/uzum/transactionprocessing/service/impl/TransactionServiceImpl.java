@@ -35,6 +35,12 @@ public class TransactionServiceImpl implements TransactionService {
         transactionRepository.unclaim(transactionId);
     }
 
+
+    @Transactional
+    public void updateFee(Long transactionId, Long fee) {
+        transactionRepository.updateFee(transactionId,fee);
+    }
+
     @Transactional(readOnly = true)
     public TransactionEntity findById(final Long transactionId) throws TransactionInvalidException {
         return transactionRepository.findById(transactionId).orElseThrow(() -> new TransactionInvalidException(Error.TRANSACTION_ID_INVALID_CODE));

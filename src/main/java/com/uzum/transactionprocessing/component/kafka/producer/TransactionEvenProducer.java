@@ -30,4 +30,8 @@ public class TransactionEvenProducer {
     public void publishForCalculateFee(TransactionValidateEvent event) {
         kafkaTemplate.send(KafkaConstants.CALCULATE_FEE, event);
     }
+
+    public void publishForCoreLedger(TransactionValidateEvent event) {
+        kafkaTemplate.send(KafkaConstants.CORE_LEDGER_TOPIC, event);
+    }
 }

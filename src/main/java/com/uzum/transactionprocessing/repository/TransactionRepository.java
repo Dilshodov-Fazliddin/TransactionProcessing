@@ -21,4 +21,8 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
     @Modifying
     @Query("update TransactionEntity t SET t.isClaimedForProcessing = false WHERE t.id = :transactionId AND t.isClaimedForProcessing = true")
     void unclaim(Long transactionId);
+
+    @Modifying
+    @Query("update TransactionEntity t SET t.fee = :fee  WHERE t.id = :transactionId")
+    void updateFee(Long transactionId, Long fee);
 }
