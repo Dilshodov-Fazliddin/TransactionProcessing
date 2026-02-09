@@ -1,5 +1,6 @@
 package com.uzum.transactionprocessing.service.impl;
 
+import com.uzum.transactionprocessing.component.adapter.cms.CmsAdapter;
 import com.uzum.transactionprocessing.constant.enums.Currency;
 import com.uzum.transactionprocessing.constant.enums.AccountStatus;
 import com.uzum.transactionprocessing.dto.response.CmsResponse;
@@ -16,15 +17,12 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class CmsIntegrationServiceImpl implements CmsIntegrationService {
-    @Override
-    public CmsResponse fetchCardInfoByToken(String token) {
-        // send http request to CMS service
-        return null;
-    }
+
+    CmsAdapter cmsAdapter;
 
     @Override
     public void validateCardToken(final String token, final Currency currency) {
-        CmsResponse cmsResponse = fetchCardInfoByToken(token);
+        CmsResponse cmsResponse = cmsAdapter.fetchCardInfoByToken(token);
 
         if (cmsResponse.cardExpireDate().isBefore(LocalDate.now())) {
             throw new CredentialsInvalidException(com.uzum.transactionprocessing.constant.enums.Error.CARD_EXPIRED_CODE);

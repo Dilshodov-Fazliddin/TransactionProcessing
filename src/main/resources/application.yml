@@ -54,3 +54,7 @@ server:
 
 logging:
   config: classpath:log4j2.yml
+
+url:
+  cms: ${CMS_URL}
+  coreLedger: ${CORE_LEDGER_URL}
