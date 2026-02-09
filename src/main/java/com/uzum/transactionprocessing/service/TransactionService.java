@@ -13,6 +13,8 @@ public interface TransactionService {
 
     void unclaim(Long transactionId);
 
+    void updateFee(Long transactionId, Long fee);
+
     TransactionEntity findById(final Long transactionId) throws TransactionInvalidException;
 
     TransactionResponse saveTransaction(final TransactionRequest request) throws TransactionInvalidException;
