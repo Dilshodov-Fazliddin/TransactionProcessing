@@ -6,7 +6,7 @@ import com.uzum.transactionprocessing.constant.enums.TransactionStatus;
 import java.time.LocalDateTime;
 
 public record TransactionResponse(
-    Long transactionId,
+    Long id,
     Long referenceId,
     TransactionStatus status,
     Long amount,
