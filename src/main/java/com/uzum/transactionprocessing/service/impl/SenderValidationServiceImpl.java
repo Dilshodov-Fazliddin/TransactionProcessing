@@ -1,5 +1,7 @@
 package com.uzum.transactionprocessing.service.impl;
 
+import com.uzum.transactionprocessing.component.adapter.cms.CmsAdapter;
+import com.uzum.transactionprocessing.component.adapter.coreledger.CoreLedgerAdapter;
 import com.uzum.transactionprocessing.constant.enums.AccountStatus;
 import com.uzum.transactionprocessing.constant.enums.Currency;
 import com.uzum.transactionprocessing.exception.kafka.nontransiets.CredentialsInvalidException;
@@ -17,14 +19,14 @@ import static com.uzum.transactionprocessing.constant.enums.Error.*;
 @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
 public class SenderValidationServiceImpl implements SenderValidationService {
 
-    CmsIntegrationService cmsIntegrationService;
-    CoreLedgerIntegrationServiceImpl coreLedgerIntegrationService;
+    CmsAdapter cmsAdapter;
+    CoreLedgerAdapter coreLedgerAdapter;
 
     @Override
     public void validateAmount(String senderToken, Long amount, Currency currency) {
 
-        var cmsResponse = cmsIntegrationService.fetchCardInfoByToken(senderToken);
-        var coreLedgerResponse = coreLedgerIntegrationService.fetchBalanceByAccountId(cmsResponse.accountId());
+        var cmsResponse = cmsAdapter.fetchCardInfoByToken(senderToken);
+        var coreLedgerResponse = coreLedgerAdapter.fetchBalanceByAccountId(cmsResponse.accountId());
 
         if (coreLedgerResponse.accountStatus().equals(AccountStatus.ACTIVE)) {
 

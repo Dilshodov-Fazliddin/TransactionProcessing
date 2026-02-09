@@ -3,9 +3,9 @@ spring:
     name: TransactionProcessing
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
     tomcat:
       test-on-borrow: true
@@ -54,3 +54,7 @@ server:
 
 logging:
   config: classpath:log4j2.yml
+
+url:
+  cms: ${CMS_URL}
+  coreLedger: ${CORE_LEDGER_URL}
