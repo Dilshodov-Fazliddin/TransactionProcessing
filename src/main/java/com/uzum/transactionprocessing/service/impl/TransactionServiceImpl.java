@@ -45,15 +45,10 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findById(transactionId).orElseThrow(() -> new TransactionInvalidException(Error.TRANSACTION_ID_INVALID_CODE));
     }
 
-    @Override
+    @Transactional
     public TransactionResponse saveTransaction(TransactionRequest request){
         TransactionEntity transactionEntity = transactionMapper.toEntity(request);
-        return transactionMapper.toResponse(save(transactionEntity));
+        return transactionMapper.toResponse(
+                transactionRepository.save(transactionEntity));
     }
-
-    @Transactional
-    public TransactionEntity save(TransactionEntity transactionEntity){
-        return transactionRepository.save(transactionEntity);
-    }
-
 }
