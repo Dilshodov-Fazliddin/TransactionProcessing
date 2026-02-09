@@ -36,7 +36,7 @@ public class CalculateFeeConsumer implements EventConsumer<TransactionValidateEv
     CalculateFeeService calculateFeeService;
 
     @RetryableTopic(attempts = "5", backOff = @BackOff(delay = 5000), include = {TransientException.class}, numPartitions = "3", replicationFactor = "1")
-    @KafkaListener(topics = KafkaConstants.AMOUNT_VALIDATE_TOPIC, groupId = KafkaConstants.CALCULATE_FEE_GROUP_ID)
+    @KafkaListener(topics = KafkaConstants.CALCULATE_FEE, groupId = KafkaConstants.CALCULATE_FEE_GROUP_ID)
     public void listen(TransactionValidateEvent event) {
         int claimed = transactionService.claimForProcessing(event.transactionId());
 
@@ -47,30 +47,22 @@ public class CalculateFeeConsumer implements EventConsumer<TransactionValidateEv
 
         TransactionEntity transaction = transactionService.findById(event.transactionId());
 
-        if (!transaction.getStatus().equals(TransactionStatus.AMOUNT_VALIDATION_FAILED)) {
+        if (!transaction.getStatus().equals(TransactionStatus.AMOUNT_VALIDATED)) {
             log.info("Transaction with id: {} is not in the required status: {}", event.transactionId(), TransactionStatus.AMOUNT_VALIDATION_FAILED);
             return;
         }
-
-        try {
-
             transactionService.updateFee(transaction.getId(), calculateFeeService.calculateFee(transaction.getAmount()));
 
             transactionService.changeTransactionStatusAndUnclaim(transaction.getId(),TransactionStatus.PROCESSING_BY_LEDGER);
 
             evenProducer.publishForCoreLedger(event);
 
-        } catch (HttpServerException e){
-            transactionService.unclaim(event.transactionId());
-            throw new HttpServerUnavailableException(e);
-        }catch (HttpClientException e){
-            throw new CredentialsInvalidException(Error.CALCULATION_INVALID_CODE);
-        }
+
     }
 
     @Override
     @DltHandler
     public void dltHandler(TransactionValidateEvent event, String exceptionMessage) {
-        transactionService.changeTransactionStatusAndUnclaim(event.transactionId(), TransactionStatus.CALCULATE_COMPLETED_FAILED);
+        transactionService.changeTransactionStatusAndUnclaim(event.transactionId(), TransactionStatus.CALCULATE_FAILED);
     }
 }
