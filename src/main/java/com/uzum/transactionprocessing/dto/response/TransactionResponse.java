@@ -4,6 +4,7 @@ import com.uzum.transactionprocessing.constant.enums.Currency;
 import com.uzum.transactionprocessing.constant.enums.TransactionStatus;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record TransactionResponse(
     Long id,
@@ -11,5 +12,5 @@ public record TransactionResponse(
     TransactionStatus status,
     Long amount,
     Currency currency,
-    LocalDateTime createdAt
+    OffsetDateTime createdAt
 ) {}
