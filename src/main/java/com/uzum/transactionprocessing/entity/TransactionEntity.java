@@ -17,6 +17,8 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @Setter
@@ -28,7 +30,10 @@ import org.hibernate.type.SqlTypes;
 public class TransactionEntity extends BaseEntity {
 
     @Column(nullable = false, unique = true)
-    Long referenceId;
+    UUID referenceId;
+
+    @Column(nullable = false)
+    Long merchantId;
 
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)

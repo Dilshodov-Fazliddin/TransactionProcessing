@@ -5,8 +5,10 @@ import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 
 public record TransactionValidateEvent
-        (
-         @NotNull(message = "Transaction id is null") Long transactionId,
-         @NotNull(message = "Request time stamp is null ") OffsetDateTime requestTimestamp
-        ) {
+    (@NotNull(message = "Transaction id is null") Long transactionId) {
+
+
+    public static TransactionValidateEvent of(Long transactionId) {
+        return new TransactionValidateEvent(transactionId);
+    }
 }

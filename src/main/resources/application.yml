@@ -36,7 +36,6 @@ spring:
   kafka:
     consumer:
       bootstrap-servers: kafka:9092
-      auto-offset-reset: earliest
 
     producer:
       bootstrap-servers: kafka:9092
@@ -55,6 +54,17 @@ server:
 logging:
   config: classpath:log4j2.yml
 
-url:
-  cms: ${CMS_URL}
-  coreLedger: ${CORE_LEDGER_URL}
+  level:
+    org:
+      apache:
+        kafka: WARN
+      springframework:
+        kafka: WARN
+
+
+service:
+  cms:
+    url: ${CMS_URL}
+
+  ledger:
+    url: ${CORE_LEDGER_URL}

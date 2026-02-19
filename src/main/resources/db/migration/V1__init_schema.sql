@@ -25,7 +25,8 @@ CREATE TYPE transaction_currency AS ENUM (
 
 CREATE TABLE transactions (
     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    reference_id bigint NOT NULL UNIQUE,
+    merchant_id bigint NOT NULL,
+    reference_id UUID NOT NULL UNIQUE,
     type transaction_type NOT NULL,
     status transaction_status NOT NULL DEFAULT 'CREATED',
     currency transaction_currency NOT NULL,
