@@ -1,5 +1,8 @@
 services:
   db:
+    networks:
+      - transaction-network
+
     image: postgres:16-alpine
     container_name: postgres_db
     ports:
@@ -12,7 +15,11 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: always
 
+
   kafka:
+    networks:
+      - transaction-network
+
     image: apache/kafka:3.7.0
     container_name: kafka-broker
     hostname: kafka
@@ -22,7 +29,7 @@ services:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_LISTENERS: CONTROLLER://0.0.0.0:29093,BROKER://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka:29092,PLAINTEXT_HOST://kafka:29092
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:29093"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,BROKER:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
@@ -31,9 +38,14 @@ services:
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
       CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
 
+
+
   kafka-ui:
+    networks:
+      - transaction-network
+
     image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
+    container_name: court-kafka-ui
     depends_on:
       - kafka
     ports:
@@ -47,6 +59,9 @@ services:
 
 
   app:
+    networks:
+      - transaction-network
+
     build: .
     container_name: transaction_processing
     depends_on:
@@ -56,13 +71,24 @@ services:
     ports:
       - "7070:7070"
     environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_KAFKA_PRODUCER_PROPERTIES_MAX_REQUEST_SIZE: 10485760
+      SPRING_KAFKA_CONSUMER_PROPERTIES_MAX_PARTITION_FETCH_BYTES: 10485760
+
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/transactions_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root_password
 
       JAVA_OPTS: "-Xms256m -Xmx512m"
 
+      CMS_URL: ${CMS_URL}
+      CORE_LEDGER_URL: ${CORE_LEDGER_URL}
+
     restart: unless-stopped
 
 volumes:
   postgres_data: {}
+
+networks:
+  transaction-network:
+    driver: bridge

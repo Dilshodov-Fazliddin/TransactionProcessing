@@ -24,7 +24,12 @@ public enum Error {
     AMOUNT_NOT_ENOUGH(10017, "Not enough money"),
     INVALID_ACCOUNT_STATUS(10018,"Account status frozen or blocked"),
     AMOUNT_VALIDATE_REQUEST_INVALID(10019,"Amount request invalid"),
-    CALCULATION_INVALID_CODE(10020,"Calculation service error code");
+    CALCULATION_INVALID_CODE(10020,"Calculation service error code"),
+
+    REFERENCE_ID_EXISTS_CODE(10030, "Transaction with this referenceId exists");
+
+
+
     final int code;
     final String message;
 

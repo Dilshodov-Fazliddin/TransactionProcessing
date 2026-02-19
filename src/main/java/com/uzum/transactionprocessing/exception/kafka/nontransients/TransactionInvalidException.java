@@ -1,4 +1,4 @@
-package com.uzum.transactionprocessing.exception.kafka.nontransiets;
+package com.uzum.transactionprocessing.exception.kafka.nontransients;
 
 import com.uzum.transactionprocessing.constant.enums.Error;
 import com.uzum.transactionprocessing.constant.enums.ErrorType;
