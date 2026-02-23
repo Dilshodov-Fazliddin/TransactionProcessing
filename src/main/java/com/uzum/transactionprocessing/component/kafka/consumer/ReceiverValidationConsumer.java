@@ -7,6 +7,7 @@ import com.uzum.transactionprocessing.constant.KafkaConstants;
 import com.uzum.transactionprocessing.constant.enums.Error;
 import com.uzum.transactionprocessing.constant.enums.TransactionStatus;
 import com.uzum.transactionprocessing.dto.event.TransactionValidateEvent;
+import com.uzum.transactionprocessing.dto.response.CmsResponse;
 import com.uzum.transactionprocessing.entity.TransactionEntity;
 import com.uzum.transactionprocessing.exception.http.HttpClientException;
 import com.uzum.transactionprocessing.exception.http.HttpServerException;
@@ -54,9 +55,9 @@ public class ReceiverValidationConsumer implements EventConsumer<TransactionVali
 
         try {
 
-            cmsAdapter.validateByTokenAndCurrency(transaction.getReceiverToken(), transaction.getCurrency());
+            CmsResponse response = cmsAdapter.getByTokenAndCurrency(transaction.getReceiverToken(), transaction.getCurrency());
 
-            transactionService.changeTransactionStatus(event.transactionId(), TransactionStatus.RECEIVER_INFO_VALIDATED);
+            transactionService.storeReceiverAccountId(transaction.getId(), response.amsAccountId());
 
             // send to the next topic
             evenProducer.publishForAmountValidation(event);

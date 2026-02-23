@@ -21,9 +21,9 @@ public class KafkaConstants {
     public static final String CALCULATE_FEE_GROUP_ID = "transactions.fee.calculate.group";
 
 
-    public static final String CORE_LEDGER_TOPIC = "transaction.transactions.topic";
+    public static final String LEDGER_TRANSACTIONS_TOPIC = "coreledger.transactions.topic";
+    public static final String LEDGER_TRANSACTIONS_GROUP_ID = "coreledger.transactions.group";
 
-    public static final String CORE_LEDGER_GROUP_ID = "transaction.transactions.group";
 
     public static final String TRUSTED_PACKAGE = "com.uzum.transactionprocessing.dto.event";
 }

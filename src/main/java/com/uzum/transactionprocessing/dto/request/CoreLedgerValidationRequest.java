@@ -2,5 +2,7 @@ package com.uzum.transactionprocessing.dto.request;
 
 import com.uzum.transactionprocessing.constant.enums.Currency;
 
-public record CoreLedgerValidationRequest(String token, Long amount, Currency currency) {
+import java.util.UUID;
+
+public record CoreLedgerValidationRequest(UUID amsAccountId, Long amount, Currency currency) {
 }

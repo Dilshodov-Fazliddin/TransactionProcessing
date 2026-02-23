@@ -3,7 +3,6 @@ package com.uzum.transactionprocessing;
 import com.uzum.transactionprocessing.component.adapter.cms.CmsAdapter;
 import com.uzum.transactionprocessing.component.kafka.consumer.SenderValidationConsumer;
 import com.uzum.transactionprocessing.component.kafka.producer.TransactionEvenProducer;
-import com.uzum.transactionprocessing.constant.enums.AccountStatus;
 import com.uzum.transactionprocessing.constant.enums.Currency;
 import com.uzum.transactionprocessing.constant.enums.TransactionStatus;
 import com.uzum.transactionprocessing.constant.enums.TransactionType;
@@ -18,13 +17,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -46,6 +41,8 @@ public class SenderValidationConsumerTest {
     private TransactionValidateEvent event;
     private TransactionEntity transaction;
 
+    private CmsResponse cmsResponse;
+
     @BeforeEach
     void setUp() {
         event = new TransactionValidateEvent(1L);
@@ -60,21 +57,23 @@ public class SenderValidationConsumerTest {
         transaction.setType(TransactionType.P2P);
         transaction.setAmount(10000L);
         transaction.setSenderToken("sender-token-123");
+
+        cmsResponse = new CmsResponse(UUID.randomUUID());
     }
 
     @Test
     void listen_WhenValidationSuccessful_ShouldUpdateStatusAndPublishEvent() {
         // Arrange
         when(transactionService.findById(transaction.getId())).thenReturn(transaction);
-        doNothing().when(cmsAdapter).validateByTokenAndCurrency(transaction.getSenderToken(), transaction.getCurrency());
+        when(cmsAdapter.getByTokenAndCurrency(transaction.getSenderToken(), transaction.getCurrency())).thenReturn(cmsResponse);
 
         // Act
         senderValidationConsumer.listen(event);
 
         // Assert
         verify(transactionService).findById(transaction.getId());
-        verify(cmsAdapter).validateByTokenAndCurrency(transaction.getSenderToken(), transaction.getCurrency());
-        verify(transactionService).changeTransactionStatus(transaction.getId(), TransactionStatus.SENDER_INFO_VALIDATED);
+        verify(cmsAdapter).getByTokenAndCurrency(transaction.getSenderToken(), transaction.getCurrency());
+        verify(transactionService).storeSenderAccountId(transaction.getId(), cmsResponse.amsAccountId());
         verify(evenProducer).publishForReceiverValidation(event);
     }
 

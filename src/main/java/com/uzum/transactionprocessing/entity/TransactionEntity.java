@@ -58,18 +58,19 @@ public class TransactionEntity extends BaseEntity {
     @PositiveOrZero
     Long fee;
 
+    UUID senderAccountId;
+
     @Column(nullable = false)
     String senderName;
 
     @Column(nullable = false)
     String senderToken;
 
+    UUID receiverAccountId;
+
     @Column(nullable = false)
     String receiverName;
 
     @Column(nullable = false)
     String receiverToken;
-
-    @Column(nullable = false)
-    boolean isClaimedForProcessing;
 }
