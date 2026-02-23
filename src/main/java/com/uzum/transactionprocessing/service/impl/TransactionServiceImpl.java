@@ -19,6 +19,8 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +57,18 @@ public class TransactionServiceImpl implements TransactionService {
         transactionEvenProducer.publishForSenderValidation(event);
 
         return transactionMapper.toResponse(transactionRepository.save(transactionEntity));
+    }
+
+    @Override
+    @Transactional
+    public void storeSenderAccountId(Long transactionId, UUID senderAccountId) {
+        transactionRepository.updateSenderAccountIdAndStatus(transactionId, senderAccountId);
+    }
+
+    @Override
+    @Transactional
+    public void storeReceiverAccountId(Long transactionId, UUID receiverAccountId) {
+        transactionRepository.updateReceiverAccountIdAndStatus(transactionId, receiverAccountId);
     }
 
     private void validateReferenceId(TransactionRequest request) {

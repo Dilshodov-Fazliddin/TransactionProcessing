@@ -50,7 +50,7 @@ public class AmountValidationConsumer implements EventConsumer<TransactionValida
 
         try {
 
-            coreLedgerAdapter.validateBalanceByAccountId(transaction.getSenderToken(), transaction.getAmount(), transaction.getCurrency());
+            coreLedgerAdapter.validateBalanceByAccountId(transaction.getSenderAccountId(), transaction.getAmount(), transaction.getCurrency());
 
             transactionService.changeTransactionStatus(transaction.getId(), TransactionStatus.AMOUNT_VALIDATED);
 

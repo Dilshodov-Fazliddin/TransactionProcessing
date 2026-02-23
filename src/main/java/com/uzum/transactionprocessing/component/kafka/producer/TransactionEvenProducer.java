@@ -1,17 +1,17 @@
 package com.uzum.transactionprocessing.component.kafka.producer;
 
 import com.uzum.transactionprocessing.constant.KafkaConstants;
+import com.uzum.transactionprocessing.dto.event.TransactionLedgerEvent;
 import com.uzum.transactionprocessing.dto.event.TransactionValidateEvent;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-@FieldDefaults(makeFinal = true,level = AccessLevel.PRIVATE)
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class TransactionEvenProducer {
     KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -31,7 +31,7 @@ public class TransactionEvenProducer {
         kafkaTemplate.send(KafkaConstants.CALCULATE_FEE, event);
     }
 
-    public void publishForCoreLedger(TransactionValidateEvent event) {
-        kafkaTemplate.send(KafkaConstants.CORE_LEDGER_TOPIC, event);
+    public void publishForCoreLedger(TransactionLedgerEvent event) {
+        kafkaTemplate.send(KafkaConstants.LEDGER_TRANSACTIONS_TOPIC, event);
     }
 }

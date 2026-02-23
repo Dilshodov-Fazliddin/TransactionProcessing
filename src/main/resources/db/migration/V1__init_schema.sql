@@ -13,7 +13,7 @@ CREATE TYPE transaction_status AS ENUM (
     'AMOUNT_VALIDATED',
     'AMOUNT_VALIDATION_FAILED',
     'SENT_TO_CORE_LEDGER',
-    'COMPLETED',
+    'SUCCESS',
     'FAILED'
 );
 
@@ -32,11 +32,12 @@ CREATE TABLE transactions (
     currency transaction_currency NOT NULL,
     amount bigint NOT NULL CHECK (amount > 0),
     fee bigint NOT NULL CHECK (fee >= 0),
+    sender_account_id UUID,
+    receiver_account_id UUID,
     sender_name varchar(255) NOT NULL,
     sender_token varchar(255) NOT NULL,
     receiver_name varchar(255) NOT NULL,
     receiver_token varchar(255) NOT NULL,
-    is_claimed_for_processing boolean default false,
     created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

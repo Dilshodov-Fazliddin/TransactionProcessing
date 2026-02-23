@@ -4,9 +4,11 @@ import com.uzum.transactionprocessing.component.kafka.EventConsumer;
 import com.uzum.transactionprocessing.component.kafka.producer.TransactionEvenProducer;
 import com.uzum.transactionprocessing.constant.KafkaConstants;
 import com.uzum.transactionprocessing.constant.enums.TransactionStatus;
+import com.uzum.transactionprocessing.dto.event.TransactionLedgerEvent;
 import com.uzum.transactionprocessing.dto.event.TransactionValidateEvent;
 import com.uzum.transactionprocessing.entity.TransactionEntity;
 import com.uzum.transactionprocessing.exception.kafka.transients.TransientException;
+import com.uzum.transactionprocessing.mapper.TransactionMapper;
 import com.uzum.transactionprocessing.service.CalculateFeeService;
 import com.uzum.transactionprocessing.service.TransactionService;
 import jakarta.validation.Valid;
@@ -32,6 +34,7 @@ public class CalculateFeeConsumer implements EventConsumer<TransactionValidateEv
     TransactionService transactionService;
     TransactionEvenProducer evenProducer;
     CalculateFeeService calculateFeeService;
+    TransactionMapper transactionMapper;
 
     @RetryableTopic(attempts = "5", backOff = @BackOff(delay = 5000), include = {TransientException.class}, numPartitions = "3", replicationFactor = "1")
     @KafkaListener(topics = KafkaConstants.CALCULATE_FEE, groupId = KafkaConstants.CALCULATE_FEE_GROUP_ID)
@@ -47,7 +50,9 @@ public class CalculateFeeConsumer implements EventConsumer<TransactionValidateEv
 
         transactionService.changeTransactionStatus(transaction.getId(), TransactionStatus.SENT_TO_CORE_LEDGER);
 
-        evenProducer.publishForCoreLedger(event);
+        TransactionLedgerEvent ledgerEvent = transactionMapper.entityToLedgerEvent(transaction);
+
+        evenProducer.publishForCoreLedger(ledgerEvent);
     }
 
     @Override

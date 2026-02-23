@@ -1,7 +1,6 @@
 package com.uzum.transactionprocessing.component.adapter.cms;
 
 import com.uzum.transactionprocessing.config.property.CmsProperties;
-import com.uzum.transactionprocessing.constant.Constants;
 import com.uzum.transactionprocessing.constant.enums.Currency;
 import com.uzum.transactionprocessing.dto.response.CmsResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +17,13 @@ public class CmsAdapter {
     CmsProperties cmsProperties;
     RestClient restClient;
 
-    public void validateByTokenAndCurrency(String token, Currency currency) {
+    public CmsResponse getByTokenAndCurrency(String token, Currency currency) {
         String requestEndpoint = String.format("%s/%s/%s", cmsProperties.getUrl(), token, currency);
 
         log.info("Sender validation url: {}", requestEndpoint);
 
-        restClient.get().uri(requestEndpoint).retrieve().toBodilessEntity();
+        var response = restClient.get().uri(requestEndpoint).retrieve().toEntity(CmsResponse.class);
+
+        return response.getBody();
     }
 }

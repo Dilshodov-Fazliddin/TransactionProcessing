@@ -16,6 +16,16 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
     void updateStatus(@Param("transactionId") Long transactionId, @Param("status") TransactionStatus status);
 
     @Modifying
+    @Query("update TransactionEntity t set t.senderAccountId = :senderAccountId, t.status = 'SENDER_INFO_VALIDATED', t.updatedAt = CURRENT_TIMESTAMP WHERE t.id = :transactionId ")
+    void updateSenderAccountIdAndStatus(@Param("transactionId") Long transactionId, @Param("senderAccountId") UUID senderAccountId);
+
+
+    @Modifying
+    @Query("update TransactionEntity t set t.receiverAccountId = :receiverAccountId, t.status = 'RECEIVER_INFO_VALIDATED', t.updatedAt = CURRENT_TIMESTAMP WHERE t.id = :transactionId ")
+    void updateReceiverAccountIdAndStatus(@Param("transactionId") Long transactionId, @Param("receiverAccountId") UUID receiverAccountId);
+
+
+    @Modifying
     @Query("update TransactionEntity t SET t.fee = :fee  WHERE t.id = :transactionId")
     void updateFee(Long transactionId, Long fee);
 

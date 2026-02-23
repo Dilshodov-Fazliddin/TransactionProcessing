@@ -13,7 +13,7 @@ public enum TransactionStatus {
     AMOUNT_VALIDATION_FAILED(true),
     CALCULATE_FAILED(true),
     SENT_TO_CORE_LEDGER(true),
-    COMPLETED(true),
+    SUCCESS(true),
     FAILED(true);
 
     final boolean isTerminal;

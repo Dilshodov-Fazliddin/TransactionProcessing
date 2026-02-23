@@ -1,4 +1,6 @@
 package com.uzum.transactionprocessing.mapper;
+
+import com.uzum.transactionprocessing.dto.event.TransactionLedgerEvent;
 import com.uzum.transactionprocessing.dto.request.TransactionRequest;
 import com.uzum.transactionprocessing.dto.response.TransactionResponse;
 import com.uzum.transactionprocessing.entity.TransactionEntity;
@@ -14,4 +16,7 @@ public interface TransactionMapper {
     TransactionEntity toEntity(TransactionRequest transactionRequest);
 
     TransactionResponse toResponse(TransactionEntity transactionEntity);
+
+    @Mapping(target = "transactionId", source = "entity.id")
+    TransactionLedgerEvent entityToLedgerEvent(TransactionEntity entity);
 }
