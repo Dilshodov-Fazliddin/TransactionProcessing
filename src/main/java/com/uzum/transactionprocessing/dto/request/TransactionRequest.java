@@ -14,6 +14,7 @@ public record TransactionRequest(@NotNull(message = "referenceId required") UUID
                                  @NotNull(message = "amount is required") @Positive(message = "amount should be positive") Long amount,
                                  @NotNull(message = "currency required") Currency currency,
                                  @NotNull(message = "merchantId required") Long merchantId,
+                                 @NotNull(message = "terminalId required") Long terminalId,
                                  @NotBlank(message = "senderName required") String senderName,
                                  @NotBlank(message = "senderToken required") String senderToken,
                                  @NotBlank(message = "receiverName required") String receiverName,

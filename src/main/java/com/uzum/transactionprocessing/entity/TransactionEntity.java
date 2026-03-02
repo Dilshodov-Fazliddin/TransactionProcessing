@@ -35,6 +35,9 @@ public class TransactionEntity extends BaseEntity {
     @Column(nullable = false)
     Long merchantId;
 
+    @Column(nullable = false)
+    Long terminalId;
+
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(columnDefinition = "type", nullable = false)

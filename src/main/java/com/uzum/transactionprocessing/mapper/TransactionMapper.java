@@ -3,6 +3,7 @@ package com.uzum.transactionprocessing.mapper;
 import com.uzum.transactionprocessing.dto.event.TransactionLedgerEvent;
 import com.uzum.transactionprocessing.dto.request.TransactionRequest;
 import com.uzum.transactionprocessing.dto.response.TransactionResponse;
+import com.uzum.transactionprocessing.dto.webhook.TransactionSendWebhook;
 import com.uzum.transactionprocessing.entity.TransactionEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,4 +20,6 @@ public interface TransactionMapper {
 
     @Mapping(target = "transactionId", source = "entity.id")
     TransactionLedgerEvent entityToLedgerEvent(TransactionEntity entity);
+
+    TransactionSendWebhook toWebhook(TransactionEntity transaction,String webhookUrl);
 }

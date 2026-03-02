@@ -68,3 +68,7 @@ service:
 
   ledger:
     url: ${CORE_LEDGER_URL}
+
+  merchant:
+    url: ${MERCHANT_URL}
+    webhookUrl: ${MERCHANT_WEBHOOK_URL}

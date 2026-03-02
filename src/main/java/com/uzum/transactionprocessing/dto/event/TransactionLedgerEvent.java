@@ -6,8 +6,11 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public record TransactionLedgerEvent(@NotNull Long transactionId, @NotNull UUID senderAccountId,
-                                     @NotNull UUID receiverAccountId, @NotNull TransactionType transactionType,
-                                     @NotNull Long amount, @NotNull Long fee,
+public record TransactionLedgerEvent(@NotNull Long transactionId,
+                                     @NotNull UUID senderAccountId,
+                                     @NotNull UUID receiverAccountId,
+                                     @NotNull TransactionType transactionType,
+                                     @NotNull Long amount,
+                                     @NotNull Long fee,
                                      @NotNull Currency currency) {
 }
