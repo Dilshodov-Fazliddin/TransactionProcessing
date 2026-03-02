@@ -24,6 +24,9 @@ public class KafkaConstants {
     public static final String LEDGER_TRANSACTIONS_TOPIC = "coreledger.transactions.topic";
     public static final String LEDGER_TRANSACTIONS_GROUP_ID = "coreledger.transactions.group";
 
+    public static final String LEDGER_TRANSACTIONS_RESULT_TOPIC = "coreledger.transactions.result.topic";
+    public static final String LEDGER_TRANSACTIONS_RESULT_GROUP_ID = "coreledger.transactions.result.group";
+
 
     public static final String TRUSTED_PACKAGE = "com.uzum.transactionprocessing.dto.event";
 }
